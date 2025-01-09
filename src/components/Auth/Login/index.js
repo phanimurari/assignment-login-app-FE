@@ -1,15 +1,31 @@
 import React, { useState } from 'react';
 
-
 const Login = () => {
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        // Handle login logic here
-        console.log('Username:', username);
-        console.log('Password:', password);
+        try {
+            const response = await fetch('https://assignment-login-app-be.onrender.com/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, email, password }),
+            });
+
+            if (response.ok) {
+                setMessage('Login Success');
+            } else {
+                setMessage('Login Failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setMessage('Login Failed');
+        }
     };
 
     return (
@@ -27,6 +43,16 @@ const Login = () => {
                     />
                 </div>
                 <div>
+                    <label htmlFor="email">Email:</label>
+                    <input
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
                     <label htmlFor="password">Password:</label>
                     <input
                         type="password"
@@ -38,8 +64,9 @@ const Login = () => {
                 </div>
                 <button type="submit">Login</button>
             </form>
+            {message && <p>{message}</p>}
         </div>
     );
 }
 
-export {Login};
+export { Login };

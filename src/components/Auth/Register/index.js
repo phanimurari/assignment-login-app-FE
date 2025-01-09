@@ -6,6 +6,7 @@ const Register = () => {
         email: '',
         password: ''
     });
+    const [message, setMessage] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -15,14 +16,31 @@ const Register = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission logic here
-        console.log('Form submitted:', formData);
+        try {
+            const response = await fetch('https://assignment-login-app-be.onrender.com/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                setMessage('User successfully registered!');
+            } else {
+                setMessage('Registration failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setMessage('An error occurred. Please try again.');
+        }
     };
 
     return (
         <form onSubmit={handleSubmit}>
+            <h2>Register</h2>
             <div>
                 <label htmlFor="username">Username:</label>
                 <input
@@ -54,6 +72,7 @@ const Register = () => {
                 />
             </div>
             <button type="submit">Register</button>
+            {message && <p>{message}</p>}
         </form>
     );
 }
